@@ -4,7 +4,7 @@ A small CLI that implements the functionality of [`hub sync`](https://github.com
 
 ### Why
 
-`hub` is deprecated by the [`gh` CLI](https://github.com/cli/cli), and I haven't found an alternative script that performs the same actions as `hub sync`.
+`hub` is deprecated by the [`gh` CLI](https://github.com/cli/cli), `gh` won't be implementing `hub sync`, and I haven't found an alternative script that performs the same actions as `hub sync`.
 
 ## Installation
 
