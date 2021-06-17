@@ -84,7 +84,7 @@ func Dir() (string, error) {
 }
 
 func DefaultBranch(remote string) string {
-	if name, err := SymbolicRef(fmt.Sprintf("refs/remotes/%s/HEAD", remote)); err != nil {
+	if name, err := SymbolicRef(fmt.Sprintf("refs/remotes/%s/HEAD", remote)); err == nil {
 		return name
 	}
 	return "refs/heads/main"
@@ -188,7 +188,6 @@ func Spawn(args ...string) error {
 }
 
 func Quiet(args ...string) bool {
-	fmt.Printf("%v\n", args)
 	cmd := exec.Command("git", args...)
 	cmd.Stderr = os.Stderr
 	return cmd.Run() == nil
@@ -203,7 +202,7 @@ func SymbolicFullName(name string) (string, error) {
 }
 
 func SymbolicRef(ref string) (string, error) {
-	output, err := execGit("symbolic-ref", ref)
+	output, err := execGitQuiet("symbolic-ref", ref)
 	if err != nil {
 		return "", err
 	}
