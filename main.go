@@ -81,7 +81,23 @@ func main() {
 			diff, err := git.NewRange(fullBranch, fullDefaultBranch)
 			check(err)
 
-			if diff.IsAncestor() {
+			// Determine if branch has been merged with a merge
+			shouldDelete := diff.IsAncestor()
+
+			// Otherwise, try to determine if branch has been squash-merged
+			if !shouldDelete {
+				ancestorHash, err := git.MergeBase(fullDefaultBranch, fullBranch)
+				check(err)
+				treeHash, err := git.TreeRef(fullBranch)
+				check(err)
+				danglingCommit, err := git.CommitTree(treeHash, "-p", ancestorHash, "-m", fmt.Sprintf("Dangling branch %s", branch))
+				check(err)
+				result, err := git.Cherry(fullDefaultBranch, danglingCommit)
+				check(err)
+				shouldDelete = strings.HasPrefix(result, "-")
+			}
+
+			if shouldDelete {
 				if branch == currentBranch {
 					git.Quiet("checkout", "--quiet", defaultBranch)
 					currentBranch = defaultBranch
