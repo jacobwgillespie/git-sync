@@ -209,6 +209,40 @@ func SymbolicRef(ref string) (string, error) {
 	return firstLine(output), err
 }
 
+func TreeRef(ref string) (string, error) {
+	output, err := execGitQuiet("rev-parse", ref+"^{tree}")
+	if err != nil {
+		return "", err
+	}
+	return firstLine(output), err
+}
+
+func MergeBase(a, b string) (string, error) {
+	output, err := execGitQuiet("merge-base", a, b)
+	if err != nil {
+		return "", err
+	}
+	return firstLine(output), nil
+}
+
+func CommitTree(args ...string) (string, error) {
+	args = append([]string{"commit-tree"}, args...)
+	output, err := execGitQuiet(args...)
+	if err != nil {
+		return "", err
+	}
+	return firstLine(output), nil
+}
+
+func Cherry(args ...string) (string, error) {
+	args = append([]string{"cherry"}, args...)
+	output, err := execGitQuiet(args...)
+	if err != nil {
+		return "", err
+	}
+	return firstLine(output), nil
+}
+
 func execGit(args ...string) (string, error) {
 	cmd := exec.Command("git", args...)
 	cmd.Stderr = os.Stderr
