@@ -217,6 +217,21 @@ func TreeRef(ref string) (string, error) {
 	return firstLine(output), err
 }
 
+func WorktreeBranches() (map[string]bool, error) {
+	output, err := execGitQuiet("worktree", "list", "--porcelain")
+	if err != nil {
+		return nil, err
+	}
+
+	branches := make(map[string]bool)
+	for _, line := range splitLines(output) {
+		if branch, ok := strings.CutPrefix(line, "branch "); ok {
+			branches[branch] = true
+		}
+	}
+	return branches, nil
+}
+
 func MergeBase(a, b string) (string, error) {
 	output, err := execGitQuiet("merge-base", a, b)
 	if err != nil {

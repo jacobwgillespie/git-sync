@@ -44,6 +44,8 @@ func main() {
 
 	branches, err := git.LocalBranches()
 	check(err)
+	worktreeBranches, err := git.WorktreeBranches()
+	check(err)
 
 	for _, branch := range branches {
 		fullBranch := fmt.Sprintf("refs/heads/%s", branch)
@@ -98,6 +100,9 @@ func main() {
 			}
 
 			if shouldDelete {
+				if branch != currentBranch && worktreeBranches[fullBranch] {
+					continue
+				}
 				if branch == currentBranch {
 					git.Quiet("checkout", "--quiet", defaultBranch)
 					currentBranch = defaultBranch
